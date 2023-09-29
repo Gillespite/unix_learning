@@ -33,12 +33,14 @@ void openFile(int32_t* fd, const char* fileName)
     }
     return;
 }
+
 void checkCurOffset(const int32_t fd)
 {
     off_t curOffset = lseek(fd, 0, SEEK_CUR);
     printf("fd:%d offset:%ld\n", fd, curOffset);
     return;
 }
+
 void copyFile(const int32_t in, const int32_t out)
 {
     char* buf[BUFFSIZE];
@@ -75,9 +77,24 @@ int main()
     closeFile(in);
     closeFile(out);
 
-    msleep(2000); // 毫秒
+    system("ls -l");
     // TODO 概率性permission denied 后续解决
     system(CMP_FILE);
     system(CLEAR_FILE);
     return 0;
 }
+/*
+permission denied 时
+-rwxrwxr-x 1 jill jill 16688 Sep 30 04:23 demo1
+-rw-rw-r-- 1 jill jill  1802 Sep 30 04:23 demo1.c
+-rw-rw-r-- 1 jill jill  1024 Sep 30 04:23 inFile
+-rw-rw-r-- 1 jill jill   405 Sep 30 02:25 ls.c
+---x-wSr-T 1 jill jill  1024 Sep 30 04:23 outFile
+
+正常时
+-rwxrwxr-x 1 jill jill 16688 Sep 30 04:24 demo1
+-rw-rw-r-- 1 jill jill  2086 Sep 30 04:24 demo1.c
+-rw-rw-r-- 1 jill jill  1024 Sep 30 04:24 inFile
+-rw-rw-r-- 1 jill jill   405 Sep 30 02:25 ls.c
+-rw--w-r-T 1 jill jill  1024 Sep 30 04:24 outFile
+*/
