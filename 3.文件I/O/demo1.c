@@ -1,3 +1,7 @@
+/*
+学习接口 open close lseek read write
+*/
+
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -5,9 +9,11 @@
 #include <unistd.h>
 
 const char* CLEAR_FILE = "rm -rf inFile outFile";
-const char* CREATE_RANDOM_FILE = "dd if=/dev/urandom of=./inFile bs=1M count=10";
+const char* CREATE_RANDOM_FILE = "dd if=/dev/urandom of=./inFile bs=1k count=1";
 const char* CMP_FILE = "md5sum inFile && md5sum outFile";
-const int32_t BUFFSIZE = 4096;
+
+const int32_t BUFFSIZE = 30;
+
 void closeFile(int32_t fd)
 {
     if (fd > 0) {
@@ -27,7 +33,12 @@ void openFile(int32_t* fd, const char* fileName)
     }
     return;
 }
-
+void checkCurOffset(const int32_t fd)
+{
+    off_t curOffset = lseek(fd, 0, SEEK_CUR);
+    printf("fd:%d offset:%ld\n", fd, curOffset);
+    return;
+}
 void copyFile(const int32_t in, const int32_t out)
 {
     char* buf[BUFFSIZE];
@@ -37,6 +48,8 @@ void copyFile(const int32_t in, const int32_t out)
             printf("copy file failed\n");
             return;
         }
+        checkCurOffset(in);// read 和 write 会改变offset
+        checkCurOffset(out);
     }
     printf("copy file success\n");
 }
